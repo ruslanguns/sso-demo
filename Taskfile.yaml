@@ -1,0 +1,57 @@
+version: '3'
+
+tasks:
+  install:
+    desc: Install all dependencies in the workspace
+    cmds:
+      - pnpm install
+
+  build:
+    desc: Build all projects in the workspace
+    cmds:
+      - pnpm recursive run build
+
+  dev:
+    desc: Run all projects in the workspace in development mode
+    cmds:
+      - pnpm recursive run dev
+
+  start:
+    desc: Start all projects in the workspace
+    cmds:
+      - pnpm recursive run start
+    deps:
+      - build
+
+  docker:up:
+    desc: "Start the Docker Compose services (Kecyloak)"
+    cmds:
+      - docker-compose up -d
+
+  docker:down:
+    desc: "Stop the Docker Compose services (Kecyloak)"
+    cmds:
+      - docker-compose down
+
+  docker:destroy:
+    desc: "Stop and remove the Docker Compose services (Kecyloak)"
+    cmds:
+      - docker-compose down --volumes --remove-orphans
+
+  create-venv:
+    desc: "Creates a Python virtual environment"
+    cmds:
+      - python3 -m venv .venv
+      - echo "Virtual environment created"
+
+  install-deps:
+    desc: "Installs dependencies in the virtual environment"
+    cmds:
+      - .venv/bin/pip install python-keycloak
+    deps: [create-venv]
+
+  setup:
+    desc: "Runs the setup.py script to provision Keycloak"
+    cmds:
+      - .venv/bin/python setup.py
+    deps: [install-deps]
